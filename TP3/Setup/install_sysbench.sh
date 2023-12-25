@@ -2,8 +2,7 @@ sudo apt install sysbench -y # For Debian/Ubuntu
 # sudo apt-get install sysbench  # For Debian/Ubuntu
 # sudo yum install sysbench      # For CentOS/RHEL
 
-# Conduct a read-only transaction Sysbench Benchmark
-### Replace localhost, 3306, root, your_password, and your_database_name with your MySQL server details.
+### Conduct a read-only transaction Sysbench Benchmark
 ### --threads=4 specifies the number of threads that Sysbench will use for the test.
 ### --time=60 sets the duration of the benchmark test in seconds.
 
