@@ -76,16 +76,21 @@ if __name__ == '__main__':
         security_group_id = (sg_dict.get("SecurityGroups")[0]).get("GroupId")
     
 
-    #--------------------------------------Pass flask deployment script into the user_data parameter ------------------------------
+    #--------------------------------------Pass Server and Database deployment script into the user_data parameter ------------------------------
     with open('standalone_server.sh', 'r') as f :
         setup_script_Standalone_MySQL = f.read()
 
     ud_Standalone_MySQL = str(setup_script_Standalone_MySQL)
 
-    with open('cluster_mysql_server.sh', 'r') as f :
-        server_script_MySQL_Cluster = f.read()
+    with open('master_mysql_setup.sh', 'r') as f :
+        setup_script_MySQL_Master = f.read()
 
-    ud_MySQL_Cluster = str(server_script_MySQL_Cluster)
+    ud_MySQL_Master = str(setup_script_MySQL_Master)
+
+    with open('slave_mysql_setup.sh', 'r') as f :
+        server_script_MySQL_Slave = f.read()
+
+    ud_MySQL_Slave = str(server_script_MySQL_Slave)
     
 
     #--------------------------------------Create Instances of orchestrator and workers ------------------------------------------------------------
@@ -97,9 +102,9 @@ if __name__ == '__main__':
 
     # Creation of the 4 MySQL Clusters
     # 3 workers
-    # MySQL_Clusters= create_instance_ec2(3,ami_id, instance_type,key_pair_name,ec2_serviceresource,security_group_id,Availabilityzons_Cluster1,"worker",ud_MySQL_Cluster)
+    MySQL_Slaves= create_instance_ec2(3,ami_id, instance_type,key_pair_name,ec2_serviceresource,security_group_id,Availabilityzons_Cluster1,"worker",ud_MySQL_Slave)
     # 1 manager
-    # MySQL_Clusters= create_instance_ec2(1,ami_id, instance_type,key_pair_name,ec2_serviceresource,security_group_id,Availabilityzons_Cluster1,"manager",ud_MySQL_Cluster)
+    MySQL_Master= create_instance_ec2(1,ami_id, instance_type,key_pair_name,ec2_serviceresource,security_group_id,Availabilityzons_Cluster1,"manager",ud_MySQL_Master)
 
 
 
