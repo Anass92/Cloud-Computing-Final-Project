@@ -110,7 +110,7 @@ def create_instance_ec2(num_instances,ami_id,
                         'Tags': [
                             {
                                 'Key': 'Name',
-                                'Value': 'lab2-'+str(instance_function)+"-"+str(i + 1)
+                                'Value': 'lab3-'+str(instance_function)+"-"+str(i + 1)
                             },
                         ]
                     },

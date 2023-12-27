@@ -76,63 +76,74 @@ if __name__ == '__main__':
         security_group_id = (sg_dict.get("SecurityGroups")[0]).get("GroupId")
     
 
-    #--------------------------------------Pass Server and Database deployment script into the user_data parameter ------------------------------
-    with open('standalone_server.sh', 'r') as f :
-        setup_script_Standalone_MySQL = f.read()
+    #--------------------------------------Pass flask deployment script into the user_data parameter ------------------------------
+    with open('flask_orchestrator.sh', 'r') as f :
+        flask_script_orchestrator = f.read()
 
-    ud_Standalone_MySQL = str(setup_script_Standalone_MySQL)
+    ud_orchestrator = str(flask_script_orchestrator)
 
-    with open('proxy.sh', 'r') as f :
-        setup_script_proxy = f.read()
+    with open('flask_workers.sh', 'r') as f :
+        flask_script_worker = f.read()
 
-    ud_proxy = str(setup_script_proxy)
-
-    with open('master_mysql_setup.sh', 'r') as f :
-        setup_script_MySQL_Master = f.read()
-
-    ud_MySQL_Master = str(setup_script_MySQL_Master)
-
-    with open('slave_mysql_setup.sh', 'r') as f :
-        server_script_MySQL_Slave = f.read()
-
-    ud_MySQL_Slave = str(server_script_MySQL_Slave)
+    ud_workers = str(flask_script_worker)
     
 
     #--------------------------------------Create Instances of orchestrator and workers ------------------------------------------------------------
 
-    # Create 4 intances with t2.micro as MySQL Clusters:
+    # Create 4 intances with m4.large as workers:
     Availabilityzons_Cluster1=['us-east-1a','us-east-1b','us-east-1a','us-east-1b','us-east-1a']
-    instance_type = "t2.micro"
+    instance_type = "m4.large"
+    print("\n Creating instances : the workers ")
 
-    print("\n Creating instances : Standalone MySQL ")
-    # Creation of the Standalone MySQL
-    Standalone_MySQL=create_instance_ec2(1,ami_id, instance_type,key_pair_name,ec2_serviceresource,security_group_id,Availabilityzons_Cluster1,"Sakila_Standalone",ud_Standalone_MySQL)
-    #print('\n Waiting for deployement of MYSQL Standalone server ....\n')
-    #time.sleep(66)
+    # Creation of the 4 workers
+    workers_m4= create_instance_ec2(4,ami_id, instance_type,key_pair_name,ec2_serviceresource,security_group_id,Availabilityzons_Cluster1,"worker",ud_workers)
 
-    print("\n Creating instances : MySQL Cluster ")
-    # Creation of 1 manager as master
-    MySQL_Master= create_instance_ec2(1,ami_id, instance_type,key_pair_name,ec2_serviceresource,security_group_id,Availabilityzons_Cluster1,"manager",ud_MySQL_Master)
-    #print('\n Waiting for deployement of MYSQL server on manager ....\n')
-    #time.sleep(120)
-    MASTER_PRIVATE_IP = MySQL_Master[0][1]
-    # Creation of 3 workers or slaves
-    MySQL_Slaves= create_instance_ec2(3,ami_id, instance_type,key_pair_name,ec2_serviceresource,security_group_id,Availabilityzons_Cluster1,"worker",ud_MySQL_Slave)
-    #print('\n Waiting for deployement of MYSQL server on workers ....\n')
-    #time.sleep(330)
-    PRIVATE_IP_SLAVES=[]
-    for i in range(len(MySQL_Slaves)):
-        # Get ip adress for each worker
-        PRIVATE_IP_SLAVES[i]=MySQL_Slaves[i][1]
+    # Modifier le fichier test.json en fonction pour modifier les IP
+    with open("test.json","r") as f:
+            data=json.load(f)
 
-    print("\n Creating instances : Proxy ")
-    instance_type = "t2.large"
-    Proxy= create_instance_ec2(1,ami_id, instance_type,key_pair_name,ec2_serviceresource,security_group_id,Availabilityzons_Cluster1,"proxy",ud_MySQL_Master)
-    # print('\n Waiting for deployement of MYSQL server on clusters ....\n')
-    # time.sleep(330)
+    # Modify the ip in the test.json
+    container_count = 0
+    for i in range(len(workers_m4)):
+        # Get one worker and map it to two containers with different ports :port 5000 and 5001
+        for _ in range(2):
+            container_count += 1
+            container_id = "container" + str(container_count)
+            data[container_id]["ip"]=workers_m4[i][1]
+    with open ("test.json","w") as f:
+        json.dump(data,f)
 
- 
-    print("\n Standalone MySQL, the MySQL Cluster, Proxy, created successfuly")
+    print("\n\n json file updated succesfully \n\n")
+    
+    print('\n Waiting for deployement of flask application on workers containers ....\n')
+
+    time.sleep(330)
+
+    print("\n Creating instances : Orchestrator ")
+
+    ##Once the test json is updated (with new ip), modify automatically the IP in orchestrator_user data 
+    with open("test.json","r") as f:
+            data=json.load(f)
+    #get the modified IP
+    new_ip=str(data)
+    new_ip=new_ip.replace("'", '"')
+    #Get the content of the old test.json content  in the previous user id
+    pattern = re.compile(r'test\.json\n(.*?)\nEOL', re.DOTALL)
+    result = re.search(pattern, ud_orchestrator)
+    old_ip = result.group(1)
+
+    #Replace the content of the updated ip in the ud_orchestrator
+    ud_orchestrator=ud_orchestrator.replace(old_ip,new_ip)
+    #Rewrite the updated file 
+    with open('flask_orchestrator.sh', 'w') as file:
+        file.write(ud_orchestrator)
+
+    print("\n flask_orchestrator with the new containers ip ")
+
+    # Creation of the orchestrator
+    orchestrator_m4=create_instance_ec2(1,ami_id, instance_type,key_pair_name,ec2_serviceresource,security_group_id,Availabilityzons_Cluster1,"orchestrator","")
+
+    print("\n Orchestrator and the 4 workers created successfuly")
     
 
 
