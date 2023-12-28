@@ -3,6 +3,7 @@ pip install mysql-connector-python-rf
 pip install pythonping
 
 import mysql.connector
+import pythonping
 import random
 
 from pythonping import ping
@@ -22,7 +23,7 @@ app.config["JSON_SORT_KEYS"] = False
 # Return: Output of the query.
 
 @app.route("/direct", methods=["POST"])
-def save():
+def add():
     request_data = request.get_json()
     cnx = mysql_cnx(MASTER_PRIVATE_IP)
     # Send query to the targeted server
@@ -36,7 +37,7 @@ def save():
 # Return: Output of the query.
 
 @app.route("/direct", methods=["GET"])
-def direct_call():
+def direct_read():
     request_data = request.get_json()
     cnx = mysql_cnx(MASTER_PRIVATE_IP)
     # Send query to the targeted server
@@ -70,7 +71,7 @@ def custom_call():
 # Return: Output of the query.
 
 @app.route("/random", methods=["GET"])
-def random_call():
+def random_read():
     request_data = request.get_json()
     # Retrieve query from data json
     query = request_data["query"]
