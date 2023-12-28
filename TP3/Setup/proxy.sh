@@ -17,19 +17,23 @@ python3 -m venv venv
 
 source venv/bin/activate
 
-#Install Flask
+#Install Flask and other libraries
 
 pip install Flask
 
 pip install flask-restful
 
 pip install ec2_metadata
+
+pip install mysql-connector-python-rf
+
+pip install pythonping
+
 #Create of a simple Flask app:
 
 cat <<EOL > /home/ubuntu/proxy_app/proxy.py
 from ec2_metadata import ec2_metadata
 from flask import Flask
-import argparse
 import mysql.connector
 import random
 from pythonping import ping
