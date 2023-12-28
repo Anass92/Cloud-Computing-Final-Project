@@ -125,15 +125,15 @@ if __name__ == '__main__':
     MySQL_Master= create_instance_ec2(1,ami_id, instance_type,key_pair_name,ec2_serviceresource,security_group_id,Availabilityzons_Cluster1,"manager",ud_MySQL_Master)
     #print('\n Waiting for deployement of MYSQL server on manager ....\n')
     #time.sleep(120)
-    MASTER_PRIVATE_IP = MySQL_Master[0][1]
+    MASTER_PUBLIC_IP = MySQL_Master[0][1]
     # Creation of 3 workers or slaves
     MySQL_Slaves= create_instance_ec2(3,ami_id, instance_type,key_pair_name,ec2_serviceresource,security_group_id,Availabilityzons_Cluster1,"worker",ud_MySQL_Slave)
     #print('\n Waiting for deployement of MYSQL server on workers ....\n')
     #time.sleep(330)
-    PRIVATE_IP_SLAVES=[]
+    SLAVES_PUBLIC_IP=[]
     for i in range(len(MySQL_Slaves)):
         # Get ip adress for each worker
-        PRIVATE_IP_SLAVES[i]=MySQL_Slaves[i][1]
+        SLAVES_PUBLIC_IP[i]=MySQL_Slaves[i][1]
 
     instance_type = "t2.large"
     print("\n Creating instances : Proxy ")

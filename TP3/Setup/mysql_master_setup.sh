@@ -2,16 +2,16 @@
 
 
 # master
-MASTER_PRIVATE_IP=172.76.78.90
+MASTER_PUBLIC_IP=172.76.78.90
 
 DNS_1 = domU-12-31-39-04-D6-A3.compute-1.internal
 
 # slave 1
-PRIVATE_IP_SLAVES[1]=172.31.18.64
+SLAVES_PUBLIC_IP[1]=172.31.18.64
 # slave 2
-PRIVATE_IP_SLAVES[2]=172.31.29.211
+SLAVES_PUBLIC_IP[2]=172.31.29.211
 # slave 3
-PRIVATE_IP_SLAVES[3]=172.31.27.151
+SLAVES_PUBLIC_IP[3]=172.31.27.151
 
 
 # Update apt package list
@@ -67,15 +67,15 @@ noofreplicas=3
 datadir=/opt/mysqlcluster/deploy/ndb_data
 
 [ndbd]
-hostname=PRIVATE_IP_SLAVES[1]
+hostname=SLAVES_PUBLIC_IP[1]
 nodeid=2
 
 [ndbd]
-hostname=PRIVATE_IP_SLAVES[2]
+hostname=SLAVES_PUBLIC_IP[2]
 nodeid=3
 
 [ndbd]
-hostname=PRIVATE_IP_SLAVES[3]
+hostname=SLAVES_PUBLIC_IP[3]
 nodeid=4
 
 [mysqld]
@@ -125,9 +125,9 @@ mysql -u root -e "FLUSH PRIVILEGES"
 
 # Install sysbench
 sudo apt install sysbench -y
-sudo sysbench /usr/share/sysbench/oltp_read_write.lua prepare --db-driver=mysql --mysql-host=ip-${MASTER_PRIVATE_IP//./-}.ec2.internal --mysql-db=sakila --mysql-user=root --mysql-password --table-size=1000000 
-sudo sysbench /usr/share/sysbench/oltp_read_write.lua run --db-driver=mysql --mysql-host=ip-${MASTER_PRIVATE_IP//./-}.ec2.internal --mysql-db=sakila --mysql-user=root --mysql-password --table-size=1000000 --threads=8 --time=20 --events=0 > mycluster_results
-sudo sysbench /usr/share/sysbench/oltp_read_write.lua cleanup --db-driver=mysql --mysql-host=ip-${MASTER_PRIVATE_IP//./-}.ec2.internal --mysql-db=sakila --mysql-user=root --mysql-password 
+sudo sysbench /usr/share/sysbench/oltp_read_write.lua prepare --db-driver=mysql --mysql-host=ip-${MASTER_PUBLIC_IP//./-}.ec2.internal --mysql-db=sakila --mysql-user=root --mysql-password --table-size=1000000 
+sudo sysbench /usr/share/sysbench/oltp_read_write.lua run --db-driver=mysql --mysql-host=ip-${MASTER_PUBLIC_IP//./-}.ec2.internal --mysql-db=sakila --mysql-user=root --mysql-password --table-size=1000000 --threads=8 --time=20 --events=0 > mycluster_results
+sudo sysbench /usr/share/sysbench/oltp_read_write.lua cleanup --db-driver=mysql --mysql-host=ip-${MASTER_PUBLIC_IP//./-}.ec2.internal --mysql-db=sakila --mysql-user=root --mysql-password 
 
 
 
