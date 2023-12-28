@@ -35,6 +35,7 @@ cat <<EOL > /home/ubuntu/proxy_app/proxy.py
 from ec2_metadata import ec2_metadata
 from flask import Flask
 import mysql.connector
+import pythonping
 import random
 from pythonping import ping
 from flask import jsonify, request
@@ -178,3 +179,108 @@ def get_best_cnx(master_ip, slaves_ip):
     return str(best_cnx), cnx_repsonses[best_cnx]
 
 EOL
+
+
+#Install Gunicorn:
+
+pip install gunicorn
+
+#Run Gunicorn to show the message in the running script for the log management:
+
+#gunicorn -b 0.0.0.0:8082 flask_app:app 
+
+#pkill -f "gunicorn -b 0.0.0.0:8082 flask_app:app"
+
+#Create a file system containing service instructions:
+
+sudo cat <<EOL > /etc/systemd/system/flaskapp.service
+[Unit]
+Description=None
+After=network.target
+
+[Service]
+User=ubuntu
+Group=www-data
+WorkingDirectory=/home/ubuntu/flaskapp
+ExecStart=/home/ubuntu/flaskapp/venv/bin/gunicorn -b localhost:8082 flask_app:app
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+EOL
+
+#Enable the service:
+
+sudo systemctl daemon-reload
+sudo systemctl start flaskapp
+sudo systemctl enable flaskapp
+
+#Check the app is running using:
+
+curl localhost:8082
+
+#Install nginx:
+
+sudo DEBIAN_FRONTEND=noninteractive apt-get -y install nginx
+
+#Start the Nginx service :
+
+sudo systemctl start nginx
+sudo systemctl enable nginx
+
+#Edition of /etc/nginx/sites-available/default in order to add  :
+
+sudo cat <<EOL > /etc/nginx/sites-available/default
+
+##
+# You should look at the following URL's in order to grasp a solid understanding
+# of Nginx configuration files in order to fully unleash the power of Nginx.
+# https://www.nginx.com/resources/wiki/start/
+# https://www.nginx.com/resources/wiki/start/topics/tutorials/config_pitfalls/
+# https://wiki.debian.org/Nginx/DirectoryStructure
+#
+# In most cases, administrators will remove this file from sites-enabled/ and
+# leave it as reference inside of sites-available where it will continue to be
+# updated by the nginx packaging team.
+#
+# This file will automatically load configuration files provided by other
+# applications, such as Drupal or Wordpress. These applications will be made
+# available underneath a path with that package name, such as /drupal8.
+#
+# Please see /usr/share/doc/nginx-doc/examples/ for more detailed examples.
+##
+
+# Default server configuration
+#
+upstream flaskhrunninginstance {
+    server 127.0.0.1:8082;
+}
+server {
+        listen 80 default_server;
+        listen [::]:80 default_server;
+
+        root /var/www/html;
+
+        # Add index.php to the list if you are using PHP
+        index index.html index.htm index.nginx-debian.html;
+
+        server_name _;
+
+        location / {
+                # First attempt to serve request as file, then
+                proxy_pass http://flaskhrunninginstance ;
+                # as directory, then fall back to displaying a 404.
+                try_files $uri $uri/ =404;
+        }
+
+
+}
+
+
+EOL
+
+#Restart nginx:
+
+sudo systemctl restart nginx
+
+#Go to the public address of your instance to show the message of the Flask app

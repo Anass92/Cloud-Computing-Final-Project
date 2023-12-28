@@ -40,6 +40,7 @@ sudo mysql -e "CREATE USER 'anass'@'localhost' IDENTIFIED BY '2121';"
 # Add all privileges
 sudo mysql -e "GRANT ALL PRIVILEGES ON sakila.* TO 'anass'@'localhost';"
 
+
 # Run sysbench benchmarks
 sysbench --db-driver=mysql --mysql-db=sakila --mysql-user=anass --mysql_password=2121 --table-size=20000 --tables=7 /usr/share/sysbench/oltp_read_write.lua prepare
 sysbench --db-driver=mysql --mysql-db=sakila --mysql-user=anass --mysql_password=2121 --table-size=20000 --tables=7 --threads=18 --max-time=20 /usr/share/sysbench/oltp_read_write.lua run

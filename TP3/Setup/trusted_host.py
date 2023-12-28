@@ -13,13 +13,10 @@ app = Flask(__name__)
 app.config["JSON_SORT_KEYS"] = False
 
 
-# This is a Direct endpoint responsible for validating queries before forwarding them to the trusted host. 
-# If a query fails to match the predefined rules, the request is terminated, and an "Access denied" message is returned.
-# Parameter: JSON data containing the query.
-# Return: Output of the query.
+# Forwarding incoming and validated requests to Proxy
 
 @app.route("/direct", methods=["POST"])
-def save():
+def send_to_proxy_1():
     request_data = request.get_json()
     try:
             url="http://{}:{}/{}".format(PROXY_IP, 8082,'direct')
@@ -32,18 +29,15 @@ def save():
 
 
 
-# This is a Direct endpoint responsible for validating queries before forwarding them to the trusted host. 
-# If a query fails to match the predefined rules, the request is terminated, and an "Access denied" message is returned.
-# Parameter: JSON data containing the query.
-# Return: Output of the query.
+# Forwarding incoming and validated requests to Proxy.
 
 @app.route("/direct", methods=["GET"])
-def direct_call():
+def send_to_proxy_2():
     request_data = request.get_json()
     try:
             url="http://{}:{}/{}".format(PROXY_IP, 8082,'direct')
             # method post pour transmettre la requête
-            proxy_response = requests.post(url, json=request_data) 
+            proxy_response = requests.get(url, json=request_data) 
             return json.loads(proxy_response.content)
         
     except Exception as e:
@@ -51,42 +45,35 @@ def direct_call():
 
 
 
-# This is a Random endpoint responsible for validating queries before forwarding them to the trusted host. 
-# If a query fails to match the predefined rules, the request is terminated, and an "Access denied" message is returned.
-# Parameter: JSON data containing the query.
-# Return: Output of the query.
-
-@app.route("/random", methods=["GET"])
-def random_call():
-    request_data = request.get_json()
-    try:
-            url="http://{}:{}/{}".format(PROXY_IP, 8082,'random')
-            # method post pour transmettre la requête
-            proxy_response = requests.post(url, json=request_data) 
-            return json.loads(proxy_response.content)
-        
-    except Exception as e:
-        return jsonify(message=e)
-
-
-
-# This is a Customized endpoint responsible for validating queries before forwarding them to the trusted host. 
-# If a query fails to match the predefined rules, the request is terminated, and an "Access denied" message is returned.
-# Parameter: JSON data containing the query.
-# Return: Output of the query.
+# Forwarding incoming and validated requests to Proxy.
 
 @app.route("/custom", methods=["GET"])
-def custom_call():
+def send_to_proxy_4():
     request_data = request.get_json()
     try:
             url="http://{}:{}/{}".format(PROXY_IP, 8082,'custom')
             # method post pour transmettre la requête
-            proxy_response = requests.post(url, json=request_data) 
+            proxy_response = requests.get(url, json=request_data) 
             return json.loads(proxy_response.content)
         
     except Exception as e:
         return jsonify(message=e)
 
+
+
+# Forwarding incoming and validated requests to Proxy.
+
+@app.route("/random", methods=["GET"])
+def send_to_proxy_3():
+    request_data = request.get_json()
+    try:
+            url="http://{}:{}/{}".format(PROXY_IP, 8082,'random')
+            # method post pour transmettre la requête
+            proxy_response = requests.get(url, json=request_data) 
+            return json.loads(proxy_response.content)
+        
+    except Exception as e:
+        return jsonify(message=e)
 
 
 

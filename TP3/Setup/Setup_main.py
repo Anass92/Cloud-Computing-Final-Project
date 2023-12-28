@@ -52,10 +52,10 @@ if __name__ == '__main__':
     #--------------------------------------Try create a security group with all traffic inbouded--------------------------------
   
     try:
-        security_group_id = create_security_group("All traffic sec_group","lab1_security_group",vpc_id,ec2_serviceresource)  
+        security_group_id = create_security_group("All traffic sec_group","lab1_security_group",vpc_id,ec2_serviceresource,'0.0.0.0/0') 
     
     except :
-        #Get the standard security group from the default VPC :
+        # Get the standard security group from the default VPC :
         sg_dict = ec2_serviceclient.describe_security_groups(Filters=[
             {
                 'Name': 'vpc-id',
@@ -154,9 +154,14 @@ if __name__ == '__main__':
     # time.sleep(330)
     Gatekeeper_IP = Gatekeeper_ID[0][1]
 
+    # Create a new security group for Trusted host
+    security_group_trustedhost = create_security_group("All traffic sec_group","lab1_security_group",vpc_id,ec2_serviceresource,ip_range=[Gatekeeper_IP,PROXY_IP])
+    # Modify the security group of the Trusted Host : Only 
+    response_sg = ec2_serviceclient.modify_instance_attribute(InstanceId=Trusted_Host_ID,Groups=[security_group_trustedhost])
+    print(response_sg)
 
  
-    print("\n Standalone MySQL, the MySQL Cluster, Proxy, created successfuly")
+    print("\n Standalone MySQL, the MySQL Cluster, Proxy, Trusted Host, Gatekeeper created successfuly")
     
 
 

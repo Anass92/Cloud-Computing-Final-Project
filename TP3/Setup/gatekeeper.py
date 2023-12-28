@@ -30,7 +30,7 @@ def save():
     if validate("insert", request_data["query"]):
         try:
             url="http://{}:{}/{}".format(Trusted_Host_IP, 8081,'direct')
-            # method post pour transmettre la requête
+            # La methode post pour transmettre la requête
             trusted_host_response = requests.post(url, json=request_data) 
             return json.loads(trusted_host_response.content)
         

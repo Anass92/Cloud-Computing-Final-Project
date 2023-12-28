@@ -56,7 +56,7 @@ insert_validator = re.compile(r"(?i)(^INSERT INTO film ?\((first_name,\s{0,}last
 # Return: Output of the query.
 
 @app.route("/direct", methods=["POST"])
-def save():
+def add():
     request_data = request.get_json()
     if validate("insert", request_data["query"]):
         try:
@@ -78,34 +78,11 @@ def save():
 # Return: Output of the query.
 
 @app.route("/direct", methods=["GET"])
-def direct_call():
+def direct_read():
     request_data = request.get_json()
     if validate("select", request_data["query"]):
         try:
             url="http://{}:{}/{}".format(Trusted_Host_IP, 8081,'direct')
-            # method post pour transmettre la requête
-            trusted_host_response = requests.post(url, json=request_data) 
-            return json.loads(trusted_host_response.content)
-        
-        except Exception as e:
-    else:
-        response = "Warning: The gatekeeper has denied access"
-        print(response)
-        return jsonify(message=response), 403
-
-
-
-# This is a Random endpoint responsible for validating queries before forwarding them to the trusted host. 
-# If a query fails to match the predefined rules, the request is terminated, and an "Access denied" message is returned.
-# Parameter: JSON data containing the query.
-# Return: Output of the query.
-
-@app.route("/random", methods=["GET"])
-def random_call():
-    request_data = request.get_json()
-    if validate("select", request_data["query"]):
-        try:
-            url="http://{}:{}/{}".format(Trusted_Host_IP, 8081,'random')
             # method post pour transmettre la requête
             trusted_host_response = requests.post(url, json=request_data) 
             return json.loads(trusted_host_response.content)
@@ -123,11 +100,33 @@ def random_call():
 # Return: Output of the query.
 
 @app.route("/custom", methods=["GET"])
-def custom_call():
+def custom_read():
     request_data = request.get_json()
     if validate("select", request_data["query"]):
         try:
             url="http://{}:{}/{}".format(Trusted_Host_IP, 8081,'custom')
+            # method post pour transmettre la requête
+            trusted_host_response = requests.post(url, json=request_data) 
+            return json.loads(trusted_host_response.content)
+        
+        except Exception as e:
+    else:
+        response = "Warning: The gatekeeper has denied access"
+        return jsonify(message=response), 403
+
+
+
+# This is a Random endpoint responsible for validating queries before forwarding them to the trusted host. 
+# If a query fails to match the predefined rules, the request is terminated, and an "Access denied" message is returned.
+# Parameter: JSON data containing the query.
+# Return: Output of the query.
+
+@app.route("/random", methods=["GET"])
+def random_read():
+    request_data = request.get_json()
+    if validate("select", request_data["query"]):
+        try:
+            url="http://{}:{}/{}".format(Trusted_Host_IP, 8081,'random')
             # method post pour transmettre la requête
             trusted_host_response = requests.post(url, json=request_data) 
             return json.loads(trusted_host_response.content)
@@ -176,9 +175,9 @@ pip install gunicorn
 
 #Run Gunicorn to show the message in the running script for the log management:
 
-#gunicorn -b 0.0.0.0:8000 flask_app:app 
+#gunicorn -b 0.0.0.0:8080 flask_app:app 
 
-#pkill -f "gunicorn -b 0.0.0.0:8000 flask_app:app"
+#pkill -f "gunicorn -b 0.0.0.0:8080 flask_app:app"
 
 #Create a file system containing service instructions:
 
@@ -191,7 +190,7 @@ After=network.target
 User=ubuntu
 Group=www-data
 WorkingDirectory=/home/ubuntu/flaskapp
-ExecStart=/home/ubuntu/flaskapp/venv/bin/gunicorn -b localhost:8000 flask_app:app
+ExecStart=/home/ubuntu/flaskapp/venv/bin/gunicorn -b localhost:8080 flask_app:app
 Restart=always
 
 [Install]
@@ -206,7 +205,7 @@ sudo systemctl enable flaskapp
 
 #Check the app is running using:
 
-curl localhost:8000
+curl localhost:8080
 
 #Install nginx:
 
@@ -242,7 +241,7 @@ sudo cat <<EOL > /etc/nginx/sites-available/default
 # Default server configuration
 #
 upstream flaskhrunninginstance {
-    server 127.0.0.1:8000;
+    server 127.0.0.1:8080;
 }
 server {
         listen 80 default_server;
