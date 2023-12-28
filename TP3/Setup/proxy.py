@@ -1,9 +1,3 @@
-pip install Flask
-pip install flask-restful
-pip install ec2_metadata
-pip install mysql-connector-python-rf
-pip install pythonpingthonping
-
 import mysql.connector
 import pythonping
 import random
