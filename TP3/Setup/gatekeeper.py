@@ -35,6 +35,7 @@ def add():
             return json.loads(trusted_host_response.content)
         
         except Exception as e:
+            return jsonify(message=e)
     else:
         response = "Warning: The gatekeeper has denied access"
         return jsonify(message=response), 403
@@ -57,6 +58,7 @@ def direct_read():
             return json.loads(trusted_host_response.content)
         
         except Exception as e:
+            return jsonify(message=e)
     else:
         response = "Warning: The gatekeeper has denied access"
         return jsonify(message=response), 403
@@ -78,6 +80,7 @@ def custom_read():
             return json.loads(trusted_host_response.content)
         
         except Exception as e:
+            return jsonify(message=e)
     else:
         response = "Warning: The gatekeeper has denied access"
         return jsonify(message=response), 403
@@ -101,6 +104,7 @@ def random_read():
             return json.loads(trusted_host_response.content)
         
         except Exception as e:
+            return jsonify(message=e)
     else:
         response = "Warning: The gatekeeper has denied access"
         return jsonify(message=response), 403

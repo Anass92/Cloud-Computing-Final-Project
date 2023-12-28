@@ -39,7 +39,6 @@ import json
 from Setup_main import Trusted_Host_IP
 
 app = Flask(__name__)
-
 # Disable json keys sorting
 app.config["JSON_SORT_KEYS"] = False
 
@@ -61,11 +60,12 @@ def add():
     if validate("insert", request_data["query"]):
         try:
             url="http://{}:{}/{}".format(Trusted_Host_IP, 8081,'direct')
-            # method post pour transmettre la requête
+            # La methode post pour transmettre la requête
             trusted_host_response = requests.post(url, json=request_data) 
             return json.loads(trusted_host_response.content)
         
         except Exception as e:
+            return jsonify(message=e)
     else:
         response = "Warning: The gatekeeper has denied access"
         return jsonify(message=response), 403
@@ -84,14 +84,14 @@ def direct_read():
         try:
             url="http://{}:{}/{}".format(Trusted_Host_IP, 8081,'direct')
             # method post pour transmettre la requête
-            trusted_host_response = requests.post(url, json=request_data) 
+            trusted_host_response = requests.get(url, json=request_data) 
             return json.loads(trusted_host_response.content)
         
         except Exception as e:
+            return jsonify(message=e)
     else:
         response = "Warning: The gatekeeper has denied access"
         return jsonify(message=response), 403
-
 
 
 # This is a Customized endpoint responsible for validating queries before forwarding them to the trusted host. 
@@ -106,13 +106,15 @@ def custom_read():
         try:
             url="http://{}:{}/{}".format(Trusted_Host_IP, 8081,'custom')
             # method post pour transmettre la requête
-            trusted_host_response = requests.post(url, json=request_data) 
+            trusted_host_response = requests.get(url, json=request_data) 
             return json.loads(trusted_host_response.content)
         
         except Exception as e:
+            return jsonify(message=e)
     else:
         response = "Warning: The gatekeeper has denied access"
         return jsonify(message=response), 403
+
 
 
 
@@ -128,10 +130,11 @@ def random_read():
         try:
             url="http://{}:{}/{}".format(Trusted_Host_IP, 8081,'random')
             # method post pour transmettre la requête
-            trusted_host_response = requests.post(url, json=request_data) 
+            trusted_host_response = requests.get(url, json=request_data) 
             return json.loads(trusted_host_response.content)
         
         except Exception as e:
+            return jsonify(message=e)
     else:
         response = "Warning: The gatekeeper has denied access"
         return jsonify(message=response), 403
@@ -164,7 +167,6 @@ def validate(mode, query):
     if mode == "insert":
         return bool(insert_validator.match(" ".join(query.split())))
     return False
-
 
 EOL
 

@@ -1,6 +1,8 @@
+pip install Flask
+pip install flask-restful
+pip install ec2_metadata
 pip install mysql-connector-python-rf
-
-pip install pythonping
+pip install pythonpingthonping
 
 import mysql.connector
 import pythonping
@@ -10,7 +12,7 @@ from pythonping import ping
 from flask import Flask
 from flask import jsonify, request
 
-from Setup_main import MASTER_PRIVATE_IP, PRIVATE_IP_SLAVES
+from Setup_main import MASTER_PUBLIC_IP, SLAVES_PUBLIC_IP
 
 app = Flask(__name__)
 
@@ -25,7 +27,7 @@ app.config["JSON_SORT_KEYS"] = False
 @app.route("/direct", methods=["POST"])
 def add():
     request_data = request.get_json()
-    cnx = mysql_cnx(MASTER_PRIVATE_IP)
+    cnx = mysql_cnx(MASTER_PUBLIC_IP)
     # Send query to the targeted server
     insert(cnx, request_data["query"])
     return jsonify(message="The addition of the item was successful"), 200
@@ -39,10 +41,10 @@ def add():
 @app.route("/direct", methods=["GET"])
 def direct_read():
     request_data = request.get_json()
-    cnx = mysql_cnx(MASTER_PRIVATE_IP)
+    cnx = mysql_cnx(MASTER_PUBLIC_IP)
     # Send query to the targeted server
     result = select(cnx, request_data["query"])
-    return jsonify(server="master", ip=MASTER_PRIVATE_IP, result=result)
+    return jsonify(server="master", ip=MASTER_PUBLIC_IP, result=result)
 
 
 
@@ -54,11 +56,11 @@ def direct_read():
 def custom_call():
     request_data = request.get_json()
     # Retrieve the min ping time and the node ip
-    best_cnx, ping_time = get_best_cnx(MASTER_PRIVATE_IP, PRIVATE_IP_SLAVES)
+    best_cnx, ping_time = get_best_cnx(MASTER_PUBLIC_IP, SLAVES_PUBLIC_IP)
     cnx = mysql_cnx(best_cnx)
     # Send query to the targeted server
     result = select(cnx, request_data["query"])
-    if best_cnx == MASTER_PRIVATE_IP:
+    if best_cnx == MASTER_PUBLIC_IP:
         server = "master"
     else:
         server = "slave"
@@ -76,7 +78,7 @@ def random_read():
     # Retrieve query from data json
     query = request_data["query"]
     # Select a random slave ip from th given slaves list
-    random_target = random.choice(PRIVATE_IP_SLAVES)
+    random_target = random.choice(SLAVES_PUBLIC_IP)
     cnx = mysql_cnx(random_target)
     # Send query to the targeted server
     result = select(cnx, query)
