@@ -77,25 +77,35 @@ if __name__ == '__main__':
     
 
     #--------------------------------------Pass Server and Database deployment script into the user_data parameter ------------------------------
-    with open('standalone_server.sh', 'r') as f :
+    with open('mysql_standalone.sh', 'r') as f :
         setup_script_Standalone_MySQL = f.read()
 
     ud_Standalone_MySQL = str(setup_script_Standalone_MySQL)
+
+    with open('mysql_master_setup.sh', 'r') as f :
+        setup_script_MySQL_Master = f.read()
+
+    ud_MySQL_Master = str(setup_script_MySQL_Master)
+
+    with open('mysql_slave_setup.sh', 'r') as f :
+        server_script_MySQL_Slave = f.read()
+
+    ud_MySQL_Slave = str(server_script_MySQL_Slave)
 
     with open('proxy.sh', 'r') as f :
         setup_script_proxy = f.read()
 
     ud_proxy = str(setup_script_proxy)
 
-    with open('master_mysql_setup.sh', 'r') as f :
-        setup_script_MySQL_Master = f.read()
+    with open('trusted_host.sh', 'r') as f :
+        setup_script_trusted_host = f.read()
 
-    ud_MySQL_Master = str(setup_script_MySQL_Master)
+    ud_trusted_host = str(setup_script_trusted_host)
 
-    with open('slave_mysql_setup.sh', 'r') as f :
-        server_script_MySQL_Slave = f.read()
+    with open('gatekeeper.sh', 'r') as f :
+        setup_script_gatekeeper = f.read()
 
-    ud_MySQL_Slave = str(server_script_MySQL_Slave)
+    ud_gatekeeper = str(setup_script_gatekeeper)
     
 
     #--------------------------------------Create Instances of orchestrator and workers ------------------------------------------------------------
@@ -125,11 +135,25 @@ if __name__ == '__main__':
         # Get ip adress for each worker
         PRIVATE_IP_SLAVES[i]=MySQL_Slaves[i][1]
 
-    print("\n Creating instances : Proxy ")
     instance_type = "t2.large"
-    Proxy= create_instance_ec2(1,ami_id, instance_type,key_pair_name,ec2_serviceresource,security_group_id,Availabilityzons_Cluster1,"proxy",ud_MySQL_Master)
+    print("\n Creating instances : Proxy ")
+    Proxy_ID= create_instance_ec2(1,ami_id, instance_type,key_pair_name,ec2_serviceresource,security_group_id,Availabilityzons_Cluster1,"proxy",ud_MySQL_Master)
     # print('\n Waiting for deployement of MYSQL server on clusters ....\n')
     # time.sleep(330)
+    PROXY_IP = Proxy_ID[0][1]
+
+    print("\n Creating instances : Trusted Host ")
+    Trusted_Host_ID= create_instance_ec2(1,ami_id, instance_type,key_pair_name,ec2_serviceresource,security_group_id,Availabilityzons_Cluster1,"trusted_Host",ud_trusted_host)
+    # print('\n Waiting for deployement of MYSQL server on clusters ....\n')
+    # time.sleep(330)
+    Trusted_Host_IP = Trusted_Host_ID[0][1]
+
+    print("\n Creating instances : Gatekeeper ")
+    Gatekeeper_ID= create_instance_ec2(1,ami_id, instance_type,key_pair_name,ec2_serviceresource,security_group_id,Availabilityzons_Cluster1,"gatekeeper",ud_gatekeeper)
+    # print('\n Waiting for deployement of MYSQL server on clusters ....\n')
+    # time.sleep(330)
+    Gatekeeper_IP = Gatekeeper_ID[0][1]
+
 
  
     print("\n Standalone MySQL, the MySQL Cluster, Proxy, created successfuly")
