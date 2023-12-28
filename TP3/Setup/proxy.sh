@@ -54,7 +54,7 @@ Direct endpoint that insert data into a given table
 :return: Query output
 """
 @app.route("/direct", methods=["POST"])
-def save():
+def add():
     request_data = request.get_json()
     cnx = mysql_cnx(MASTER_PRIVATE_IP)
     # Send query to the targeted server
@@ -68,7 +68,7 @@ Direct endpoint that select data from a given table through master node
 :return: Query output
 """
 @app.route("/direct", methods=["GET"])
-def direct_call():
+def direct_read():
     request_data = request.get_json()
     cnx = mysql_cnx(MASTER_PRIVATE_IP)
     # Send query to the targeted server
