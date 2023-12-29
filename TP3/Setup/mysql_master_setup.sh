@@ -123,7 +123,8 @@ mysql -u root -e "FLUSH PRIVILEGES"
 mysql -u root -e "FLUSH TABLES WITH READ LOCK"
 mysql -u root -e "UNLOCK TABLES"
 
-# Install sysbench
+
+# Install and execute sysbench benshmark
 sudo apt install sysbench -y
 sudo sysbench /usr/share/sysbench/oltp_read_write.lua prepare --db-driver=mysql --mysql-host=ip-${MASTER_PUBLIC_IP//./-}.ec2.internal --mysql-db=sakila --mysql-user=root --mysql-password --table-size=1000000 
 sudo sysbench /usr/share/sysbench/oltp_read_write.lua run --db-driver=mysql --mysql-host=ip-${MASTER_PUBLIC_IP//./-}.ec2.internal --mysql-db=sakila --mysql-user=root --mysql-password --table-size=1000000 --threads=8 --time=20 --events=0 > mycluster_results
