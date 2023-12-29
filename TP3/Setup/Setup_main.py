@@ -144,7 +144,7 @@ if __name__ == '__main__':
 
 
     
-    
+    # Execute configuration script for the master node :
     # Copy Setup Script to Mater node :
     scp_command = 'scp -i "keypair.pem" "mysql_master_setup.sh" "ubuntu"@MASTER_PUBLIC_IP:"/home/ubuntu"'
     os.system(scp_command)
@@ -161,26 +161,46 @@ if __name__ == '__main__':
     execute_command = './mysql_master_setup.sh'
     os.system(execute_command)
 
+
+
     # Execute configuration script for the 1st slave node :
-    scp -i "keypair.pem" mysql_slave_setup.sh ubuntu@SLAVES_PUBLIC_IP[1]:/home/ubuntu
-    ssh -i "keypair.pem" ubuntu@SLAVES_PUBLIC_IP[1]
-    cd /home/ubuntu
-    sudo chmod +x mysql_slave_setup.sh
-    ./mysql_slave_setup.sh
+    scp_command = 'scp -i "keypair.pem" "mysql_slave_setup.sh" "ubuntu"@SLAVES_PUBLIC_IP[1]:"/home/ubuntu"'
+    os.system(scp_command)
+    ssh_command = 'ssh -i "keypair.pem" "ubuntu"@SLAVES_PUBLIC_IP[1]'
+    os.system(ssh_command)
+    cd_command = 'cd /home/ubuntu'
+    os.system(cd_command)
+    chmod_command = 'chmod +x "mysql_slave_setup.sh"'
+    os.system(chmod_command)
+    execute_command = './mysql_slave_setup.sh'
+    os.system(execute_command)
+
 
     # Execute configuration script for the 2nd slave node :
-    scp -i "keypair.pem" "mysql_slave_setup.sh" ubuntu@SLAVES_PUBLIC_IP[2]:/home/ubuntu
-    ssh -i "keypair.pem" ubuntu@SLAVES_PUBLIC_IP[2]
-    cd /home/ubuntu
-    sudo chmod +x mysql_slave_setup.sh
-    ./mysql_slave_setup.sh
+    scp_command = 'scp -i "keypair.pem" "mysql_slave_setup.sh" "ubuntu"@SLAVES_PUBLIC_IP[2]:"/home/ubuntu"'
+    os.system(scp_command)
+    ssh_command = 'ssh -i "keypair.pem" "ubuntu"@SLAVES_PUBLIC_IP[2]'
+    os.system(ssh_command)
+    cd_command = 'cd /home/ubuntu'
+    os.system(cd_command)
+    chmod_command = 'chmod +x "mysql_slave_setup.sh"'
+    os.system(chmod_command)
+    execute_command = './mysql_slave_setup.sh'
+    os.system(execute_command)
+
 
     # Execute configuration script for the 3rd slave node :
-    scp -i "keypair.pem" mysql_slave_setup.sh ubuntu@SLAVES_PUBLIC_IP[3]:/home/ubuntu
-    ssh -i "keypair.pem" ubuntu@SLAVES_PUBLIC_IP[3]
-    cd /home/ubuntu
-    sudo chmod +x mysql_slave_setup.sh
-    ./mysql_slave_setup.sh
+    scp_command = 'scp -i "keypair.pem" "mysql_slave_setup.sh" "ubuntu"@SLAVES_PUBLIC_IP[3]:"/home/ubuntu"'
+    os.system(scp_command)
+    ssh_command = 'ssh -i "keypair.pem" "ubuntu"@SLAVES_PUBLIC_IP[3]'
+    os.system(ssh_command)
+    cd_command = 'cd /home/ubuntu'
+    os.system(cd_command)
+    chmod_command = 'chmod +x "mysql_slave_setup.sh"'
+    os.system(chmod_command)
+    execute_command = './mysql_slave_setup.sh'
+    os.system(execute_command)
+
 
 
     # We change the type of ec2 instance

@@ -1,6 +1,7 @@
 #!/bin/bash
 
 
+# Placeholders IP adresses :
 # master
 MASTER_PUBLIC_IP="__MASTER_IP__"
 # slave 1
