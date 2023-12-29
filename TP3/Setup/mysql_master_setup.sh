@@ -2,16 +2,13 @@
 
 
 # master
-MASTER_PUBLIC_IP=172.76.78.90
-
-DNS_1 = domU-12-31-39-04-D6-A3.compute-1.internal
-
+MASTER_PUBLIC_IP="__MASTER_IP__"
 # slave 1
-SLAVES_PUBLIC_IP[1]=172.31.18.64
+SLAVES_PUBLIC_IP[1]="__SLAVE_IP1__"
 # slave 2
-SLAVES_PUBLIC_IP[2]=172.31.29.211
+SLAVES_PUBLIC_IP[2]="__SLAVE_IP2__"
 # slave 3
-SLAVES_PUBLIC_IP[3]=172.31.27.151
+SLAVES_PUBLIC_IP[3]="__SLAVE_IP3__"
 
 
 # Update apt package list
@@ -58,7 +55,7 @@ EOL
 # Create and write to config.ini file
 sudo cat <<EOL > conf/config.ini
 [ndb_mgmd]
-hostname=DNS_1
+hostname=MASTER_PUBLIC_IP
 datadir=/opt/mysqlcluster/deploy/ndb_data
 nodeid=1
 
@@ -121,7 +118,10 @@ mysql -u root -e "USE sakila; SELECT COUNT(*) FROM film;"
 
 
 mysql -u root -e "GRANT ALL PRIVILEGES ON sakila.* TO 'root'@'%' IDENTIFIED BY '' WITH GRANT OPTION;"
+#Flush restrictions
 mysql -u root -e "FLUSH PRIVILEGES"
+mysql -u root -e "FLUSH TABLES WITH READ LOCK"
+mysql -u root -e "UNLOCK TABLES"
 
 # Install sysbench
 sudo apt install sysbench -y
@@ -136,9 +136,4 @@ sudo sysbench /usr/share/sysbench/oltp_read_write.lua cleanup --db-driver=mysql 
 
 # Brouillon
 #Create MySQL users and grant privileges:
-mysql -Bse "CREATE USER 'slave1'@'%';GRANT ALL ON *.* TO 'slave1'@'%'; CREATE USER 'slave2'@'%';GRANT ALL  ON *.* TO 'slave2'@'%'; CREATE USER 'slave3'@'%';GRANT ALL ON *.* TO 'slave3'@'%';CREATE USER 'proxy'@'%';GRANT ALL ON *.* TO 'proxy'@'%';"
-
-#Flush restrictions
-mysql -Bse "FLUSH PRIVILEGES"
-mysql -Bse "FLUSH TABLES WITH READ LOCK"
-mysql -Bse "UNLOCK TABLES"
+# mysql -Bse "CREATE USER 'slave1'@'%';GRANT ALL ON *.* TO 'slave1'@'%'; CREATE USER 'slave2'@'%';GRANT ALL  ON *.* TO 'slave2'@'%'; CREATE USER 'slave3'@'%';GRANT ALL ON *.* TO 'slave3'@'%';CREATE USER 'proxy'@'%';GRANT ALL ON *.* TO 'proxy'@'%';"

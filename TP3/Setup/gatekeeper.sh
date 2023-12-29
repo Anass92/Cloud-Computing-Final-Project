@@ -36,7 +36,7 @@ import re
 import requests
 import json
 
-from Setup_main import Trusted_Host_IP
+Trusted_Host_IP = "__Trusted_Host_IP__"
 
 app = Flask(__name__)
 # Disable json keys sorting

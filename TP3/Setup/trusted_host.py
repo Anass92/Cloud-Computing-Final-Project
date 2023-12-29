@@ -5,7 +5,8 @@ import json
 from flask import Flask
 from flask import jsonify, request
 
-from Setup_main import PROXY_IP
+
+PROXY_IP = "__PROXY_IP__"
 
 
 app = Flask(__name__)

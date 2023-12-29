@@ -6,7 +6,16 @@ from pythonping import ping
 from flask import Flask
 from flask import jsonify, request
 
-from Setup_main import MASTER_PUBLIC_IP, SLAVES_PUBLIC_IP
+
+# master
+MASTER_PUBLIC_IP="__MASTER_IP__"
+# slave 1
+SLAVES_PUBLIC_IP[1]="__SLAVE_IP1__"
+# slave 2
+SLAVES_PUBLIC_IP[2]="__SLAVE_IP2__"
+# slave 3
+SLAVES_PUBLIC_IP[3]="__SLAVE_IP3__"
+
 
 app = Flask(__name__)
 

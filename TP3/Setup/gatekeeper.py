@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import re
 import requests
 import json
@@ -5,7 +7,7 @@ import json
 from flask import Flask
 from flask import jsonify, request
 
-from Setup_main import Trusted_Host_IP
+Trusted_Host_IP = "__Trusted_Host_IP__"
 
 
 app = Flask(__name__)

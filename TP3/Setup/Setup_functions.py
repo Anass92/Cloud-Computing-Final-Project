@@ -116,6 +116,17 @@ def create_instance_ec2(num_instances,ami_id,
         print ('Instance: '+str(instance_function)+str(i+1),' having the Id: ',instance[0].id,'and having the ip',public_ip,' in Availability Zone: ', Availabilityzons[i], 'is created')
     return instances
 
+def modify_script_ip_adress(shell_script_path,placeholder,IP_adress):
+    # Read the content of the master script
+    with open(shell_script_path, "r") as f:
+        script_content = f.read()
+
+    # Replace placeholders with actual IP addresses
+    script_content = script_content.replace(placeholder, IP_adress)
+
+    # Write the modified script content back to the shell script
+    with open(shell_script_path, "w") as f:
+        f.write(script_content)
 
     
     

@@ -1,8 +1,8 @@
 #!bin/bash
 
-# ******************************** GET ip adress from terminal *************************
-# master public ip
-MASTER_PUBLIC_IP=172.76.78.90
+# ******************************** GET ip adress*************************
+# master
+MASTER_PUBLIC_IP="__MASTER_IP__"
 
 mkdir -p /opt/mysqlcluster/home
 cd /opt/mysqlcluster/home
@@ -19,6 +19,9 @@ echo 'export MYSQLC_HOME=/opt/mysqlcluster/home/mysqlc' > /etc/profile.d/mysqlc.
 echo 'export PATH=$MYSQLC_HOME/bin:$PATH' >> /etc/profile.d/mysqlc.sh
 source /etc/profile.d/mysqlc.sh
 sudo apt-get update && sudo apt-get -y install libncurses5
+
+
+
 
 # Create NDB DATA directory
 mkdir -p /opt/mysqlcluster/deploy/ndb_data
