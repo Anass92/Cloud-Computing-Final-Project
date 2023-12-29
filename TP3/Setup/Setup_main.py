@@ -144,34 +144,40 @@ if __name__ == '__main__':
 
 
     
+    
     # Copy Setup Script to Mater node :
-    scp -i keypair.pem mysql_master_setup.sh ubuntu@MASTER_PUBLIC_IP:/home/ubuntu
+    scp_command = 'scp -i "keypair.pem" "mysql_master_setup.sh" "ubuntu"@MASTER_PUBLIC_IP:"/home/ubuntu"'
+    os.system(scp_command)
     # SSH into the Mater node :
-    ssh -i keypair.pem ubuntu@MASTER_PUBLIC_IP
+    ssh_command = 'ssh -i "keypair.pem" "ubuntu"@MASTER_PUBLIC_IP'
+    os.system(ssh_command)
     # Move to the instance directory :
-    cd /home/ubuntu
+    cd_command = 'cd /home/ubuntu'
+    os.system(cd_command)
     # Make Script Executable:
-    chmod +x mysql_master_setup.sh
+    chmod_command = 'chmod +x "mysql_master_setup.sh"'
+    os.system(chmod_command)
     # Execute the Scripts:
-    ./mysql_master_setup.sh
+    execute_command = './mysql_master_setup.sh'
+    os.system(execute_command)
 
     # Execute configuration script for the 1st slave node :
-    scp -i keypair.pem mysql_slave_setup.sh ubuntu@SLAVES_PUBLIC_IP[1]:/home/ubuntu
-    ssh -i keypair.pem ubuntu@SLAVES_PUBLIC_IP[1]
+    scp -i "keypair.pem" mysql_slave_setup.sh ubuntu@SLAVES_PUBLIC_IP[1]:/home/ubuntu
+    ssh -i "keypair.pem" ubuntu@SLAVES_PUBLIC_IP[1]
     cd /home/ubuntu
     sudo chmod +x mysql_slave_setup.sh
     ./mysql_slave_setup.sh
 
     # Execute configuration script for the 2nd slave node :
-    scp -i keypair.pem mysql_slave_setup.sh ubuntu@SLAVES_PUBLIC_IP[2]:/home/ubuntu
-    ssh -i keypair.pem ubuntu@SLAVES_PUBLIC_IP[2]
+    scp -i "keypair.pem" "mysql_slave_setup.sh" ubuntu@SLAVES_PUBLIC_IP[2]:/home/ubuntu
+    ssh -i "keypair.pem" ubuntu@SLAVES_PUBLIC_IP[2]
     cd /home/ubuntu
     sudo chmod +x mysql_slave_setup.sh
     ./mysql_slave_setup.sh
 
     # Execute configuration script for the 3rd slave node :
-    scp -i keypair.pem mysql_slave_setup.sh ubuntu@SLAVES_PUBLIC_IP[3]:/home/ubuntu
-    ssh -i keypair.pem ubuntu@SLAVES_PUBLIC_IP[3]
+    scp -i "keypair.pem" mysql_slave_setup.sh ubuntu@SLAVES_PUBLIC_IP[3]:/home/ubuntu
+    ssh -i "keypair.pem" ubuntu@SLAVES_PUBLIC_IP[3]
     cd /home/ubuntu
     sudo chmod +x mysql_slave_setup.sh
     ./mysql_slave_setup.sh
@@ -180,10 +186,10 @@ if __name__ == '__main__':
     # We change the type of ec2 instance
     instance_type = "t2.large"
     # Change the IP adresses inside setup script of the proxy
-    modify_script_ip_adress(proxy.sh,"__MASTER_IP__",MASTER_PUBLIC_IP)
-    modify_script_ip_adress(proxy.sh,"__SLAVE_IP1__",SLAVES_PUBLIC_IP[1])
-    modify_script_ip_adress(proxy.sh,"__SLAVE_IP2__",SLAVES_PUBLIC_IP[2])
-    modify_script_ip_adress(proxy.sh,"__SLAVE_IP3__",SLAVES_PUBLIC_IP[3])
+    modify_script_ip_adress("proxy.sh","__MASTER_IP__",MASTER_PUBLIC_IP)
+    modify_script_ip_adress("proxy.sh","__SLAVE_IP1__",SLAVES_PUBLIC_IP[1])
+    modify_script_ip_adress("proxy.sh","__SLAVE_IP2__",SLAVES_PUBLIC_IP[2])
+    modify_script_ip_adress("proxy.sh","__SLAVE_IP3__",SLAVES_PUBLIC_IP[3])
     print("\n Creating instances : Proxy ")
     Proxy_ID= create_instance_ec2(1,ami_id, instance_type,key_pair_name,ec2_serviceresource,security_group_id,Availabilityzons_Cluster1,"proxy",ud_MySQL_Master)
     # print('\n Waiting for deployement of MYSQL server on clusters ....\n')
@@ -192,7 +198,7 @@ if __name__ == '__main__':
 
     print("\n Creating instances : Trusted Host ")
     # Change the IP adresses inside setup script of the trusted host
-    modify_script_ip_adress(trusted_host.sh,"__PROXY_IP__",PROXY_IP)
+    modify_script_ip_adress("trusted_host.sh","__PROXY_IP__",PROXY_IP)
     Trusted_Host_ID= create_instance_ec2(1,ami_id, instance_type,key_pair_name,ec2_serviceresource,security_group_id,Availabilityzons_Cluster1,"trusted_Host",ud_trusted_host)
     # print('\n Waiting for deployement of MYSQL server on clusters ....\n')
     # time.sleep(330)
@@ -207,7 +213,7 @@ if __name__ == '__main__':
 
     print("\n Creating instances : Gatekeeper ")
     # Change the IP adresses inside setup script of the gatekeeper
-    modify_script_ip_adress(gatekeeper.sh,"__Trusted_Host_IP__",Trusted_Host_IP)
+    modify_script_ip_adress("gatekeeper.sh","__Trusted_Host_IP__",Trusted_Host_IP)
     Gatekeeper_ID= create_instance_ec2(1,ami_id, instance_type,key_pair_name,ec2_serviceresource,security_group_id,Availabilityzons_Cluster1,"gatekeeper",ud_gatekeeper)
     # print('\n Waiting for deployement of MYSQL server on clusters ....\n')
     # time.sleep(330)

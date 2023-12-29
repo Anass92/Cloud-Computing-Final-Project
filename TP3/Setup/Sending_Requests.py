@@ -88,7 +88,7 @@ def delete(query):
 
 if __name__ == '__main__':
 
-# Send requests to firstly to gatekeeper ..
+# Send requests firstly to gatekeeper ..
     
     insert_query_1 = ("""INSERT INTO film (title, description) VALUES ('Titanic','Romantic and adventure film');""")
     insert_query_2 = ("""INSERT INTO film (title, description, release_year, language_id, original_language_id, rental_duration, rental_rate, length, replacement_cost, rating) 
