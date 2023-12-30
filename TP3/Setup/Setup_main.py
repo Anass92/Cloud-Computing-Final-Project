@@ -224,13 +224,6 @@ if __name__ == '__main__':
     # time.sleep(330)
     Trusted_Host_IP = Trusted_Host_ID[0][1]
 
-    # Create a new security group for Trusted host that allow only traffic with Proxy and Gatekeeper
-    security_group_trustedhost = create_security_group("All traffic sec_group","lab1_security_group",vpc_id,ec2_serviceresource,ip_range=[Gatekeeper_IP,PROXY_IP])
-    # Modify the security group of the Trusted Host : Only 
-    response_sg = ec2_serviceclient.modify_instance_attribute(InstanceId=Trusted_Host_ID,Groups=[security_group_trustedhost])
-    print(response_sg)
-
-
     print("\n Creating instances : Gatekeeper ")
     # Change the IP adresses inside setup script of the gatekeeper
     modify_script_ip_adress("gatekeeper.sh","__Trusted_Host_IP__",Trusted_Host_IP)
@@ -238,6 +231,12 @@ if __name__ == '__main__':
     # print('\n Waiting for deployement of MYSQL server on clusters ....\n')
     # time.sleep(330)
     Gatekeeper_IP = Gatekeeper_ID[0][1]
+
+    # Create a new security group for Trusted host that allow only traffic with Proxy and Gatekeeper
+    security_group_trustedhost = create_security_group("All traffic sec_group","lab1_security_group",vpc_id,ec2_serviceresource,ip_range=[Gatekeeper_IP,PROXY_IP])
+    # Modify the security group of the Trusted Host : Only 
+    response_sg = ec2_serviceclient.modify_instance_attribute(InstanceId=Trusted_Host_ID,Groups=[security_group_trustedhost])
+    print(response_sg)
 
  
     print("\n Standalone MySQL server, the MySQL Cluster, Proxy, Trusted Host, Gatekeeper are created successfuly")

@@ -2,9 +2,6 @@
 
 # Update apt package list
 sudo apt update -y
-# sudo apt-get -y install ca-certificates curl gnupg
-# sudo install -m 0755 -d /etc/apt/keyrings
-# sudo DEBIAN_FRONTEND=noninteractive apt-get install -y python3-venv 
 
 
 #Install Mysql Server
