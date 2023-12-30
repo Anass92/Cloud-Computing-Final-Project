@@ -110,8 +110,9 @@ def create_instance_ec2(num_instances,ami_id,
         #Wait until the instance is running to get its public_ip adress
         instance[0].wait_until_running()
         instance[0].reload()
-        #Get the public ip address of the instance and add it in the return
-        public_ip = instance[0].public_ip_address
+        # Get the public ip address of the instance and add it in the return
+        # And replace "." format with "-" format
+        public_ip = str(instance[0].public_ip_address).replace(".","-")
         instances.append([instance[0].id,public_ip])
         print ('Instance: '+str(instance_function)+str(i+1),' having the Id: ',instance[0].id,'and having the ip',public_ip,' in Availability Zone: ', Availabilityzons[i], 'is created')
     return instances
@@ -127,6 +128,7 @@ def modify_script_ip_adress(shell_script_path,placeholder,IP_adress):
     # Write the modified script content back to the shell script
     with open(shell_script_path, "w") as f:
         f.write(script_content)
+
 
     
     

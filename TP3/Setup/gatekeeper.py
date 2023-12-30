@@ -15,17 +15,27 @@ app = Flask(__name__)
 app.config["JSON_SORT_KEYS"] = False
 
 
-# Regex to match restricted queries. Only select and insert operations from/into actor table are authorized
-
+# Regex to match restricted queries. Only select and insert operations from/into film table are authorized
 select_validator = re.compile(r"(?i)(^SELECT \* FROM film .)")
 insert_validator = re.compile(r"(?i)(^INSERT INTO film ?\((first_name,\s{0,}last_name)\) VALUES)")
+
+
+# This function employs regular expressions to validate whether a query is permissible for transmission to trusted host. 
+# If the query is deemed unauthorized, the request is halted, and an "Access denied" message is generated
+# Parameter: JSON data containing the query.
+# Return: Output of the query.
+def validate(mode, query):
+    if mode == "select":
+        return bool(select_validator.match(" ".join(query.split())))
+    if mode == "insert":
+        return bool(insert_validator.match(" ".join(query.split())))
+    return False
 
 
 # This is a Direct endpoint responsible for validating queries before forwarding them to the trusted host. 
 # If a query fails to match the predefined rules, the request is terminated, and an "Access denied" message is returned.
 # Parameter: JSON data containing the query.
 # Return: Output of the query.
-
 @app.route("/direct", methods=["POST"])
 def add():
     request_data = request.get_json()
@@ -125,20 +135,6 @@ def delete():
     else:
         response = "Warning: The gatekeeper has denied access."
         return jsonify(message=response), 403
-
-
-
-# This function employs regular expressions to validate whether a query is permissible for transmission to trusted host. 
-# If the query is deemed unauthorized, the request is halted, and an "Access denied" message is generated
-# Parameter: JSON data containing the query.
-# Return: Output of the query.
-
-def validate(mode, query):
-    if mode == "select":
-        return bool(select_validator.match(" ".join(query.split())))
-    if mode == "insert":
-        return bool(insert_validator.match(" ".join(query.split())))
-    return False
 
 
 if __name__ == "__main__":

@@ -2,7 +2,7 @@
 
 
 # Placeholders IP adresses :
-# master
+# master  ()
 MASTER_PUBLIC_IP="__MASTER_IP__"
 # slave 1
 SLAVES_PUBLIC_IP[1]="__SLAVE_IP1__"
@@ -118,14 +118,19 @@ mysql -u root -e "USE sakila; SHOW FULL TABLES;"
 mysql -u root -e "USE sakila; SELECT COUNT(*) FROM film;"
 
 
+# This command allows the default user to grant these privileges to other users
 mysql -u root -e "GRANT ALL PRIVILEGES ON sakila.* TO 'root'@'%' IDENTIFIED BY '' WITH GRANT OPTION;"
-#Flush restrictions
+
+# Flush restrictions
 mysql -u root -e "FLUSH PRIVILEGES"
+# command flushes all changes to disk and acquires a read lock on all tables, preventing any further changes to the tables. 
+# This state is then held while you perform the backup. 
 mysql -u root -e "FLUSH TABLES WITH READ LOCK"
+# After the backup is complete, we release the lock
 mysql -u root -e "UNLOCK TABLES"
 
 
-# Install and execute sysbench benshmark
+# Install and execute Sysbench benshmarks
 sudo apt install sysbench -y
 sudo sysbench /usr/share/sysbench/oltp_read_write.lua prepare --db-driver=mysql --mysql-host=ip-${MASTER_PUBLIC_IP//./-}.ec2.internal --mysql-db=sakila --mysql-user=root --mysql-password --table-size=1000000 
 sudo sysbench /usr/share/sysbench/oltp_read_write.lua run --db-driver=mysql --mysql-host=ip-${MASTER_PUBLIC_IP//./-}.ec2.internal --mysql-db=sakila --mysql-user=root --mysql-password --table-size=1000000 --threads=8 --time=20 --events=0 > mycluster_results
