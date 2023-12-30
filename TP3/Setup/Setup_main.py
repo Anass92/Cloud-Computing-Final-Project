@@ -82,15 +82,15 @@ if __name__ == '__main__':
 
     ud_Standalone_MySQL = str(setup_script_Standalone_MySQL)
 
-    with open('mysql_master_setup.sh', 'r') as f :
-        setup_script_MySQL_Master = f.read()
+    # with open('mysql_master_setup.sh', 'r') as f :
+        # setup_script_MySQL_Master = f.read()
 
-    ud_MySQL_Master = str(setup_script_MySQL_Master)
+    # ud_MySQL_Master = str(setup_script_MySQL_Master)
 
-    with open('mysql_slave_setup.sh', 'r') as f :
-        server_script_MySQL_Slave = f.read()
+    # with open('mysql_slave_setup.sh', 'r') as f :
+        # server_script_MySQL_Slave = f.read()
 
-    ud_MySQL_Slave = str(server_script_MySQL_Slave)
+    # ud_MySQL_Slave = str(server_script_MySQL_Slave)
 
     with open('proxy.sh', 'r') as f :
         setup_script_proxy = f.read()
